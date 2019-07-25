@@ -5,6 +5,7 @@
 	"version": "0.0.1",
 	"publisher": "liangzhu",
 	"license": "GPL-3.0",
+	"icon": "images/logo.jpg",
 	"engines": {
 		"vscode": "^1.31.0"
 	},
