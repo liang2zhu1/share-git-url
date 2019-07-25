@@ -11,3 +11,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.2]
 
 - Add logo for marketplace
+
+## [0.0.3]
+
+- Remove shortcut key since it breaks CTRL + C
+- Wire up copy selection as markdown
