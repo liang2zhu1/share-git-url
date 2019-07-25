@@ -1,0 +1,178 @@
+{
+	"name": "share-git-url",
+	"displayName": "Share url of git files",
+	"description": "This extention makes it to share web access url for Git files (Azure Repos only for now) through browser or clipboard",
+	"version": "0.0.1",
+	"publisher": "liangzhu",
+	"license": "GPL-3.0",
+	"engines": {
+		"vscode": "^1.31.0"
+	},
+	"categories": [
+		"SCM Providers"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"extensionDependencies": [
+		"vscode.git"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/liang2zhu1/share-git-url"
+	},
+	"main": "./dist/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "shareGitFile.copyAzureReposUrl",
+				"title": "Copy Azure Repos url"
+			},
+			{
+				"command": "shareGitFile.openInAzureRepos",
+				"title": "Open Azure Repos url"
+			},
+			{
+				"command": "shareGitFile.copyAzureReposSelectionUrl",
+				"title": "Copy selection Azure Repos url"
+			},
+			{
+				"command": "shareGitFile.openSelectionInAzureRepos",
+				"title": "Open selection Azure Repos url"
+			},
+			{
+				"command": "shareGitFile.copyAzureReposMarkdown",
+				"title": "Copy Azure Repos url in Markdown"
+			},
+			{
+				"command": "shareGitFile.copyAzureReposSelectionMarkdown",
+				"title": "Copy Azure Repos selection url in Markdown"
+			}
+		],
+		"keybindings": [
+			{
+				"key": "ctrl+c u",
+				"command": "shareGitFile.copyAzureReposUrl",
+				"when": "!editorHasSelection"
+			},
+			{
+				"key": "ctrl+c u",
+				"command": "shareGitFile.copyAzureReposSelectionUrl",
+				"when": "editorHasSelection"
+			},
+			{
+				"key": "ctrl+c m",
+				"command": "shareGitFile.copyAzureReposSelectionMarkdown",
+				"when": "editorHasSelection"
+			},
+			{
+				"key": "ctrl+o u",
+				"command": "shareGitFile.openInAzureRepos",
+				"when": "!editorHasSelection"
+			},
+			{
+				"key": "ctrl+o u",
+				"command": "shareGitFile.openSelectionInAzureRepos",
+				"when": "editorHasSelection"
+			}
+		],
+		"menus": {
+			"editor/title/context": [
+				{
+					"command": "shareGitFile.copyAzureReposUrl",
+					"group": "azureReposUrl"
+				},
+				{
+					"command": "shareGitFile.openInAzureRepos",
+					"group": "azureReposUrl"
+				},
+				{
+					"command": "shareGitFile.copyAzureReposMarkdown",
+					"group": "azureReposUrl"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "shareGitFile.copyAzureReposUrl",
+					"group": "azureReposUrl"
+				},
+				{
+					"command": "shareGitFile.openInAzureRepos",
+					"group": "azureReposUrl"
+				},
+				{
+					"command": "shareGitFile.copyAzureReposMarkdown",
+					"group": "azureReposUrl"
+				}
+			],
+			"editor/context": [
+				{
+					"command": "shareGitFile.copyAzureReposUrl",
+					"group": "azureReposUrl",
+					"when": "!editorHasSelection"
+				},
+				{
+					"command": "shareGitFile.openInAzureRepos",
+					"group": "azureReposUrl",
+					"when": "!editorHasSelection"
+				},
+				{
+					"command": "shareGitFile.copyAzureReposSelectionUrl",
+					"group": "azureReposUrl",
+					"when": "editorHasSelection"
+				},
+				{
+					"command": "shareGitFile.openSelectionInAzureRepos",
+					"group": "azureReposUrl",
+					"when": "editorHasSelection"
+				},
+				{
+					"command": "shareGitFile.copyAzureReposMarkdown",
+					"group": "azureReposUrl",
+					"when": "!editorHasSelection && config.shareGitFile.enableMarkdownSupport"
+				},
+				{
+					"command": "shareGitFile.copyAzureReposSelectionMarkdown",
+					"group": "azureReposUrl",
+					"when": "editorHasSelection && config.shareGitFile.enableMarkdownSupport"
+				}
+			]
+		},
+		"configuration": {
+			"title": "Share Git Files",
+			"properties": {
+				"shareGitFile.enableMarkdownSupport": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enable copy file/selection as markdown"
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "webpack --mode production",
+		"compile": "webpack --mode none",
+		"watch": "webpack --mode none --watch",
+		"pretest": "npm run compile",
+		"test-compile": "tsc -p ./",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^5.2.6",
+		"@types/node": "^10.14.13",
+		"@types/vscode": "^1.31.0",
+		"glob": "^7.1.4",
+		"mocha": "^6.1.4",
+		"ts-loader": "^6.0.4",
+		"tslint": "^5.12.1",
+		"typescript": "^3.3.1",
+		"vscode-test": "^1.0.0-next.0",
+		"webpack": "^4.37.0",
+		"webpack-cli": "^3.3.6"
+	},
+	"dependencies": {
+		"@types/lodash": "^4.14.136",
+		"lodash": "^4.17.15"
+	}
+}
