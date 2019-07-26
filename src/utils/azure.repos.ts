@@ -7,6 +7,7 @@ import { AzureReposUrlResult } from "../api/interface";
 import { fileNotUnderGitError } from "../resources";
 import { getGitRepositories } from "./git";
 import { log, logVerbose } from "./logger";
+import { getConfigurationProperty } from "./system";
 
 /**
  * Get Azure Repos url for a file/folder or a selection within a file
@@ -46,7 +47,10 @@ export async function getAzureReposUrl(arg?: any, selection?: vscode.Selection):
 
                     if (repo.state.remotes && repo.state.remotes.length > 0) {
                         const remoteRoot = repo.state.remotes[0].fetchUrl; // Ignore multi remotes scenario for now
-                        const branch = "master"; //TODO: hard code for now, option to use master or current branch 
+                        const useCurrentBranch = getConfigurationProperty("shareGitFile.useCurrentBranch") as boolean;
+                        const branch = useCurrentBranch
+                            ? (await repo.getBranch("HEAD")).name // TODO: this is expensive and cause 1-2 seconds delay on UI, ideally we should cache
+                            : getConfigurationProperty("shareGitFile.defaultBranchName") as string;
                         if (remoteRoot && branch) {
                             const localRepoRootPath = repo.rootUri.fsPath;
                             const relativeFilePath = convertFsPathToUrlFormat(localRepoRootPath, fileFsPath, isCaseSensitive);
@@ -143,7 +147,7 @@ function removeFullRef(repoRootUrl: string): string {
  */
 function getWebAccessFileUrl(repoWebAccessRootUrl: string, branch: string, path: string, selection?: vscode.Selection): string {
     assert(path.startsWith("/"), "Path should begin with a forward slash");
-    let url = `${repoWebAccessRootUrl}?path=${encodeURIComponent(path)}&GB=${encodeURIComponent(branch)}`;
+    let url = `${repoWebAccessRootUrl}?path=${encodeURIComponent(path)}&version=GB${encodeURIComponent(branch)}`;
     if (selection) {
         const selectionParameters =
             `&line=${encodeURIComponent(selection.start.line + 1)}` + // VS Code posision is 0-based...

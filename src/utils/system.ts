@@ -25,3 +25,10 @@ export function showStatusBarMessage(message: string): void {
     vscode.window.setStatusBarMessage(message, 5000);
 }
 
+/**
+ * Get configuration property
+ * @param name name of the configuration
+ */
+export function getConfigurationProperty(name: string): unknown {
+    return vscode.workspace.getConfiguration().get(name);
+}

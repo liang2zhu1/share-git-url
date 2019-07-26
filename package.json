@@ -119,6 +119,16 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Enable copy file/selection as markdown"
+				},
+				"shareGitFile.useCurrentBranch": {
+					"type": "boolean",
+					"default": false,
+					"description": "Enable to use current branch than default(master) branch"
+				},
+				"shareGitFile.defaultBranchName": {
+					"type": "string",
+					"default": "master",
+					"description": "Set default branch name (if different than 'master')"
 				}
 			}
 		}
