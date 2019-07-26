@@ -47,34 +47,7 @@
 			},
 			{
 				"command": "shareGitFile.copyAzureReposSelectionMarkdown",
-				"title": "Copy Azure Repos selection url in Markdown"
-			}
-		],
-		"keybindings": [
-			{
-				"key": "ctrl+c u",
-				"command": "shareGitFile.copyAzureReposUrl",
-				"when": "!editorHasSelection"
-			},
-			{
-				"key": "ctrl+c u",
-				"command": "shareGitFile.copyAzureReposSelectionUrl",
-				"when": "editorHasSelection"
-			},
-			{
-				"key": "ctrl+c m",
-				"command": "shareGitFile.copyAzureReposSelectionMarkdown",
-				"when": "editorHasSelection"
-			},
-			{
-				"key": "ctrl+o u",
-				"command": "shareGitFile.openInAzureRepos",
-				"when": "!editorHasSelection"
-			},
-			{
-				"key": "ctrl+o u",
-				"command": "shareGitFile.openSelectionInAzureRepos",
-				"when": "editorHasSelection"
+				"title": "Copy selection Azure Repos url in Markdown"
 			}
 		],
 		"menus": {

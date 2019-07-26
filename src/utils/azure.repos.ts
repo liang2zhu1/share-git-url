@@ -108,11 +108,32 @@ function convertFsPathToUrlFormat(rootFsPath: string, fileFsPath: string, isCase
  * @param repoRemoteUrl repo root url from git configuration
  */
 function getWebAccessRepoRootUrl(repoRemoteUrl: string): string {
-    const indexOfAt = repoRemoteUrl.indexOf("@"); // Azure DevOps remote url may look like https://mseng@dev.azure.com/mseng/AzureDevOps/_git/AzureDevOps
-    if (indexOfAt >= 0) {
-        repoRemoteUrl = repoRemoteUrl.replace(/\/\/[^@]*@/, "//");
+    let repoRootUrl = repoRemoteUrl;
+    if (isAzureDevOpsHostedUrl(repoRootUrl)) {
+        repoRootUrl = removeOrgNameAt(repoRootUrl);
+        repoRootUrl = removeFullRef(repoRootUrl);
     }
-    return repoRemoteUrl;
+    return repoRootUrl;
+}
+
+/**
+ * Azure DevOps Service remote url may contains 'org-name@' before the domain for legacy reason
+ */
+function removeOrgNameAt(repoRemoteUrl: string): string {
+    let repoRootUrl = repoRemoteUrl;
+    if (repoRootUrl.indexOf("@") >= 0) {
+        // url may look like https://mseng@dev.azure.com/mseng/AzureDevOps/_git/AzureDevOps
+        repoRootUrl = repoRootUrl.replace(/\/\/[^@]*@/, "//");
+    }
+    return repoRootUrl;
+}
+
+/**
+ * Azure DevOps supports limited ref and if enlisted using full refs it needs get removed 
+  */
+function removeFullRef(repoRootUrl: string): string {
+    repoRootUrl = repoRootUrl.replace(/_git\/_full\//i, "_git/"); // '_git/_full/' => '_git/'
+    return repoRootUrl;
 }
 
 /**
@@ -134,4 +155,9 @@ function getWebAccessFileUrl(repoWebAccessRootUrl: string, branch: string, path:
         url = `${url}${selectionParameters}`;
     }
     return url;
+}
+
+function isAzureDevOpsHostedUrl(repoRoot: string): boolean {
+    const lcRepoRoot = repoRoot.toLocaleLowerCase();
+    return lcRepoRoot.indexOf("dev.azure.com") >= 0 || lcRepoRoot.indexOf(".visualstudio.com") >= 0;
 }
