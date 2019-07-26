@@ -1,6 +1,6 @@
 ## Features
 
-This extension provides ability to easily get sharable URLs for git files (as of 0.0.1 release the git provider is limited to [Azure Repos](https://azure.microsoft.com/en-us/services/devops/repos/) only)
+This extension provides ability to easily get sharable URLs for git files
 
 - Copy (or open) url of active `Editor` document
 - Copy a markdown version of active `Editor` document (for sharing with eg Teams)
@@ -20,14 +20,17 @@ This extension contributes the following settings:
 
 ## Known Issues
 
-- As of release 0.0.1
-  - No testing has been performed on non-Windows platform although it should just work
-  - Git provider is limited to [Azure Repos](https://azure.microsoft.com/en-us/services/devops/repos/) only)
+- As of release 0.0.4
+  - No testing has been performed on non-Windows platform although it should just work (Please report if you found it broken!)
+  - Git provider only supports [Azure Repos](https://azure.microsoft.com/en-us/services/devops/repos/) only, but GitHub works as well with auto redirection (except selection)
 
+- Copy markdown 
+  - While [Microsoft Teams](https://products.office.com/en-us/microsoft-teams/group-chat-software) supports markdown, it does not format the pasted text as markdown, workaround may be delete the last char and enter it by keyboard
+    - Further more, VS Code does not support copy HTML to clipboard and has no plan to do so until it becomes JS standard, see [#77790](https://github.com/microsoft/vscode/issues/77790)
 ## Release Notes
 
 ### 0.0.1
 
-Initial release of share git url extension supporting Azure Repos only
+Initial release of share git url extension supporting Azure Repos (partially GitHub).
 
 ---

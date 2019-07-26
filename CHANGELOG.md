@@ -11,3 +11,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.2]
 
 - Add logo for marketplace
+
+## [0.0.4]
+
+- Fix limited ref on Azure DevOps and sorting discrepancy between file/selection
+
+## [0.0.5]
+
+- Fix readme and changelog and package.json description

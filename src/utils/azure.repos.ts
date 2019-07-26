@@ -29,7 +29,6 @@ export async function getAzureReposUrl(arg?: any, selection?: vscode.Selection):
         }
 
         if (fileFsPath) {
-            // TODO: Ensure we cover git extension disabled scenario - we declared dependency in the package.json so likely we won't be loaded anyway? Should we change in order to load and give an error message? 
             const repositories = getGitRepositories();
             logVerbose(`Found ${repositories && repositories.length} repos, paths are: ${repositories.map(r => r.rootUri.fsPath).join(",")}`);
 
