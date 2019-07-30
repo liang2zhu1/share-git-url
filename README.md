@@ -16,11 +16,13 @@ You must not disable built-in `Git` extension (which is enabled by default) or y
 
 This extension contributes the following settings:
 
-- `shareGitFile.enableMarkdownSupport`: enable/disable `Copy markdown` support, default on
+- `shareGitFile.enableMarkdownSupport`: enable to show `Copy markdown` context menu, default enabled.
+- `shareGitFile.useCurrentBranch`: enable to use current git branch than default (master) branch, default disabled.
+- `shareGitFile.defaultBranchName`: default branch name, default 'master'.
 
 ## Known Issues
 
-- As of release 0.0.4
+- As of release 0.0.4shareGitFile.defaultBranchName`: default branch name, default 'master'.
   - No testing has been performed on non-Windows platform although it should just work (Please report if you found it broken!)
   - Git provider only supports [Azure Repos](https://azure.microsoft.com/en-us/services/devops/repos/) only, but GitHub works as well with auto redirection (except selection)
 
