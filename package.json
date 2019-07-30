@@ -2,7 +2,7 @@
 	"name": "share-git-url",
 	"displayName": "Easy url for git files",
 	"description": "This extention makes it easy to share web access url for Git files (full for Azure Repos and partial for GitHub) through browser or clipboard",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"publisher": "liangzhu",
 	"license": "GPL-3.0",
 	"icon": "images/logo.jpg",
