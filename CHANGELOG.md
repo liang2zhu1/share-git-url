@@ -16,3 +16,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Remove shortcut key since it breaks CTRL + C
 - Wire up copy selection as markdown
+
+## [0.0.4]
+
+- Fix limited ref on Azure DevOps and sorting discrepancy between file/selection
+
+## [0.0.5]
+
+- Fix readme and changelog and package.json description

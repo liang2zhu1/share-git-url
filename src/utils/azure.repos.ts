@@ -7,6 +7,7 @@ import { AzureReposUrlResult } from "../api/interface";
 import { fileNotUnderGitError } from "../resources";
 import { getGitRepositories } from "./git";
 import { log, logVerbose } from "./logger";
+import { getConfigurationProperty } from "./system";
 
 /**
  * Get Azure Repos url for a file/folder or a selection within a file
@@ -29,7 +30,6 @@ export async function getAzureReposUrl(arg?: any, selection?: vscode.Selection):
         }
 
         if (fileFsPath) {
-            // TODO: Ensure we cover git extension disabled scenario - we declared dependency in the package.json so likely we won't be loaded anyway? Should we change in order to load and give an error message? 
             const repositories = getGitRepositories();
             logVerbose(`Found ${repositories && repositories.length} repos, paths are: ${repositories.map(r => r.rootUri.fsPath).join(",")}`);
 
@@ -47,7 +47,10 @@ export async function getAzureReposUrl(arg?: any, selection?: vscode.Selection):
 
                     if (repo.state.remotes && repo.state.remotes.length > 0) {
                         const remoteRoot = repo.state.remotes[0].fetchUrl; // Ignore multi remotes scenario for now
-                        const branch = "master"; //TODO: hard code for now, option to use master or current branch 
+                        const useCurrentBranch = getConfigurationProperty("shareGitFile.useCurrentBranch") as boolean;
+                        const branch = useCurrentBranch
+                            ? (await repo.getBranch("HEAD")).name // TODO: this is expensive and cause 1-2 seconds delay on UI, ideally we should cache
+                            : getConfigurationProperty("shareGitFile.defaultBranchName") as string;
                         if (remoteRoot && branch) {
                             const localRepoRootPath = repo.rootUri.fsPath;
                             const relativeFilePath = convertFsPathToUrlFormat(localRepoRootPath, fileFsPath, isCaseSensitive);
@@ -108,11 +111,32 @@ function convertFsPathToUrlFormat(rootFsPath: string, fileFsPath: string, isCase
  * @param repoRemoteUrl repo root url from git configuration
  */
 function getWebAccessRepoRootUrl(repoRemoteUrl: string): string {
-    const indexOfAt = repoRemoteUrl.indexOf("@"); // Azure DevOps remote url may look like https://mseng@dev.azure.com/mseng/AzureDevOps/_git/AzureDevOps
-    if (indexOfAt >= 0) {
-        repoRemoteUrl = repoRemoteUrl.replace(/\/\/[^@]*@/, "//");
+    let repoRootUrl = repoRemoteUrl;
+    if (isAzureDevOpsHostedUrl(repoRootUrl)) {
+        repoRootUrl = removeOrgNameAt(repoRootUrl);
+        repoRootUrl = removeFullRef(repoRootUrl);
     }
-    return repoRemoteUrl;
+    return repoRootUrl;
+}
+
+/**
+ * Azure DevOps Service remote url may contains 'org-name@' before the domain for legacy reason
+ */
+function removeOrgNameAt(repoRemoteUrl: string): string {
+    let repoRootUrl = repoRemoteUrl;
+    if (repoRootUrl.indexOf("@") >= 0) {
+        // url may look like https://mseng@dev.azure.com/mseng/AzureDevOps/_git/AzureDevOps
+        repoRootUrl = repoRootUrl.replace(/\/\/[^@]*@/, "//");
+    }
+    return repoRootUrl;
+}
+
+/**
+ * Azure DevOps supports limited ref and if enlisted using full refs it needs get removed 
+  */
+function removeFullRef(repoRootUrl: string): string {
+    repoRootUrl = repoRootUrl.replace(/_git\/_full\//i, "_git/"); // '_git/_full/' => '_git/'
+    return repoRootUrl;
 }
 
 /**
@@ -123,7 +147,7 @@ function getWebAccessRepoRootUrl(repoRemoteUrl: string): string {
  */
 function getWebAccessFileUrl(repoWebAccessRootUrl: string, branch: string, path: string, selection?: vscode.Selection): string {
     assert(path.startsWith("/"), "Path should begin with a forward slash");
-    let url = `${repoWebAccessRootUrl}?path=${encodeURIComponent(path)}&GB=${encodeURIComponent(branch)}`;
+    let url = `${repoWebAccessRootUrl}?path=${encodeURIComponent(path)}&version=GB${encodeURIComponent(branch)}`;
     if (selection) {
         const selectionParameters =
             `&line=${encodeURIComponent(selection.start.line + 1)}` + // VS Code posision is 0-based...
@@ -134,4 +158,9 @@ function getWebAccessFileUrl(repoWebAccessRootUrl: string, branch: string, path:
         url = `${url}${selectionParameters}`;
     }
     return url;
+}
+
+function isAzureDevOpsHostedUrl(repoRoot: string): boolean {
+    const lcRepoRoot = repoRoot.toLocaleLowerCase();
+    return lcRepoRoot.indexOf("dev.azure.com") >= 0 || lcRepoRoot.indexOf(".visualstudio.com") >= 0;
 }

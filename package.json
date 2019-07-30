@@ -1,8 +1,8 @@
 {
 	"name": "share-git-url",
-	"displayName": "Share url of git files",
-	"description": "This extention makes it to share web access url for Git files (Azure Repos only for now) through browser or clipboard",
-	"version": "0.0.3",
+	"displayName": "Easy url for git files",
+	"description": "This extention makes it easy to share web access url for Git files (full for Azure Repos and partial for GitHub) through browser or clipboard",
+	"version": "0.0.4",
 	"publisher": "liangzhu",
 	"license": "GPL-3.0",
 	"icon": "images/logo.jpg",
@@ -47,7 +47,7 @@
 			},
 			{
 				"command": "shareGitFile.copyAzureReposSelectionMarkdown",
-				"title": "Copy Azure Repos selection url in Markdown"
+				"title": "Copy selection Azure Repos url in Markdown"
 			}
 		],
 		"menus": {
@@ -119,6 +119,16 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Enable copy file/selection as markdown"
+				},
+				"shareGitFile.useCurrentBranch": {
+					"type": "boolean",
+					"default": false,
+					"description": "Enable to use current branch than default(master) branch"
+				},
+				"shareGitFile.defaultBranchName": {
+					"type": "string",
+					"default": "master",
+					"description": "Set default branch name (if different than 'master')"
 				}
 			}
 		}
@@ -142,7 +152,7 @@
 		"tslint": "^5.12.1",
 		"typescript": "^3.3.1",
 		"vscode-test": "^1.0.0-next.0",
-		"webpack": "^4.37.0",
+		"webpack": "^4.38.0",
 		"webpack-cli": "^3.3.6"
 	},
 	"dependencies": {
