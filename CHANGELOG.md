@@ -24,3 +24,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.5]
 
 - Fix readme and changelog and package.json description
+
+## [0.0.6]
+
+- README changes
+
+## [0.0.7]
+
+- Fix [Cannot open when use current branch and not checked out](https://github.com/liang2zhu1/share-git-url/issues/1)

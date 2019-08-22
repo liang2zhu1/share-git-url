@@ -4,7 +4,7 @@ import * as _ from "lodash";
 import * as os from "os";
 import * as vscode from "vscode";
 import { AzureReposUrlResult } from "../api/interface";
-import { fileNotUnderGitError } from "../resources";
+import { fileNotUnderGitError, repoHasNoRemotesError, repoHasNoRemotesFetchUrlError } from "../resources";
 import { getGitRepositories } from "./git";
 import { log, logVerbose } from "./logger";
 import { getConfigurationProperty } from "./system";
@@ -47,11 +47,14 @@ export async function getAzureReposUrl(arg?: any, selection?: vscode.Selection):
 
                     if (repo.state.remotes && repo.state.remotes.length > 0) {
                         const remoteRoot = repo.state.remotes[0].fetchUrl; // Ignore multi remotes scenario for now
-                        const useCurrentBranch = getConfigurationProperty("shareGitFile.useCurrentBranch") as boolean;
-                        const branch = useCurrentBranch
-                            ? (await repo.getBranch("HEAD")).name // TODO: this is expensive and cause 1-2 seconds delay on UI, ideally we should cache
-                            : getConfigurationProperty("shareGitFile.defaultBranchName") as string;
-                        if (remoteRoot && branch) {
+                        if (remoteRoot) {
+                            const useCurrentBranch = getConfigurationProperty("shareGitFile.useCurrentBranch") as boolean;
+                            let branch = useCurrentBranch
+                                ? (await repo.getBranch("HEAD")).name // TODO: this is expensive and cause 1-2 seconds delay on UI, ideally we should cache
+                                : getConfigurationProperty("shareGitFile.defaultBranchName") as string;
+                            if (!branch) {
+                                branch = "master"; // just fall back to master which is better than nothing
+                            }
                             const localRepoRootPath = repo.rootUri.fsPath;
                             const relativeFilePath = convertFsPathToUrlFormat(localRepoRootPath, fileFsPath, isCaseSensitive);
                             const url = getWebAccessFileUrl(
@@ -66,10 +69,15 @@ export async function getAzureReposUrl(arg?: any, selection?: vscode.Selection):
                                 gitPath: relativeFilePath.substr(1), // Remove leading '/'
                                 error: null
                             };
+                        } else {
+                            defaultResult.error = _.template(repoHasNoRemotesFetchUrlError)({ repoPath: repo.rootUri.fsPath, remoteName: repo.state.remotes[0].name });
+                            log(defaultResult.error);
                         }
+                    } else {
+                        defaultResult.error = _.template(repoHasNoRemotesError)({ repoPath: repo.rootUri.fsPath });
+                        log(defaultResult.error);
                     }
-                }
-                else {
+                } else {
                     defaultResult.error = _.template(fileNotUnderGitError)({ fileFsPath: fileFsPath });
                     log(defaultResult.error);
                 }
